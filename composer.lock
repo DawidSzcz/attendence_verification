@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3525e3ea71f76fe257095e588eea2353",
+    "content-hash": "55b081422e46a8bc859f09643bcccbe4",
     "packages": [
         {
             "name": "2amigos/yii2-date-time-picker-widget",
@@ -1898,6 +1898,50 @@
                 "psr-3"
             ],
             "time": "2016-10-10T12:19:37+00:00"
+        },
+        {
+            "name": "purrweb/yii2-heroku",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PurrWeb/yii2-heroku.git",
+                "reference": "ea99076cf1f57db5f6c220ca293d83f74f33b041"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PurrWeb/yii2-heroku/zipball/ea99076cf1f57db5f6c220ca293d83f74f33b041",
+                "reference": "ea99076cf1f57db5f6c220ca293d83f74f33b041",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2.0"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "purrweb\\heroku\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitriy Krista",
+                    "email": "dmitriy.krista@gmail.com"
+                }
+            ],
+            "description": "Generate yii2 environments for easy deployment on heroku",
+            "homepage": "https://github.com/PurrWeb/yii2-heroku",
+            "keywords": [
+                "deploy",
+                "extension",
+                "generator",
+                "heroku",
+                "yii2"
+            ],
+            "time": "2015-06-30T09:43:40+00:00"
         },
         {
             "name": "sebastian/comparator",
