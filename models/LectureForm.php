@@ -4,15 +4,15 @@ namespace app\models;
 
 class LectureForm extends \yii\base\Model
 {
-    public $time;
+    public $date_time;
     public $name;
-    public $lecturer_name;
+    public $lecturer_id;
     public $classroom;
 
     public function rules()
     {
         return [
-            [['name', 'time', 'lecturer_name', 'classroom'], 'required']
+            [['name', 'date_time', 'lecturer_id', 'classroom'], 'required']
         ];
     }
 
@@ -20,10 +20,9 @@ class LectureForm extends \yii\base\Model
     {
         $lecture = new Lecture();
 
-        list($name, $surname) = explode(' ', $this->lecturer_name);
-        $lecture->time = $this->time;
+        $lecture->time = $this->date_time;
         $lecture->name = $this->name;
-        $lecture->lecturer_id = Lecturer::findOne(['name' => $name, 'surname' => $surname])->id;
+        $lecture->lecturer_id = $this->lecturer_id;
         $lecture->classroom = $this->classroom;
         $lecture->save();
     }

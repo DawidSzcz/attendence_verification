@@ -66,7 +66,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->redirect('/site/lectures');
     }
 
     /**
@@ -131,8 +131,7 @@ class SiteController extends Controller
 
     public function actionLectures()
     {
-        \Yii::error('krw');
-        return $this->render('lectures', [ 'model' => new LectureForm(), 'lectures' => Lecture::find()]);
+        return $this->render('lectures', [ 'model' => new LectureForm(), 'lectures' => new ActiveDataProvider(['query' => Lecture::find()])]);
     }
 
     public function actionAddlecture()
@@ -140,8 +139,6 @@ class SiteController extends Controller
         $model = new LectureForm();
 
         $model->load(Yii::$app->request->post());
-        \Yii::error(var_export($model->safeAttributes(),true));
-        \Yii::error(var_export($model,true));
         $model->addLecture();
 
         return $this->redirect('lectures');

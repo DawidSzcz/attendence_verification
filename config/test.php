@@ -32,7 +32,17 @@ return [
                 'domain' => 'localhost',
             ],
             */
-        ],        
+        ],
+        'log' => [
+            'traceLevel' => 3,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                    'log-file' => '/logs/logs-test.log'
+                ],
+            ],
+        ],
     ],
     'params' => $params,
 ];

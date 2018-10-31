@@ -3,6 +3,10 @@
     use dosamigos\datetimepicker\DateTimePicker;
 ?>
 
+<?= \yii\grid\GridView::widget([
+    'dataProvider' => $lectures
+]);?>
+
 
 <?php $form = ActiveForm::begin([
         'id' => 'lecture-form',
@@ -14,7 +18,7 @@
 
 <?=$form->field($model, 'name')->textInput(); ?>
 
-<?=$form->field($model, 'time')->widget(DateTimePicker::className(), [
+<?=$form->field($model, 'date_time')->widget(DateTimePicker::className(), [
     'language' => 'en',
     'size' => 'ms',
     'template' => '{input}',
@@ -27,8 +31,14 @@
     ]]);?>
 
 <?=$form->field($model, 'classroom')->textInput(); ?>
-
-<?=$form->field($model, 'lecturer_name')->dropDownList(\app\models\Lecturer::find()->select(['surname'])->asArray(true)->all());?>
+<?php Yii::error(var_export(array_reduce(\app\models\Lecturer::find()->all(), function ($aux, $lecturer) {
+    $aux[$lecturer->id] = $lecturer->name . ' ' . $lecturer->surname;
+    return $aux;
+},  []), true)); ?>
+<?=$form->field($model, 'lecturer_id')->dropDownList(array_reduce(\app\models\Lecturer::find()->all(), function ($aux, $lecturer) {
+    $aux[$lecturer->id] = $lecturer->name . ' ' . $lecturer->surname;
+    return $aux;
+},  []));?>
 
 <?=\yii\helpers\Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'login-button']); ?>
 <?php ActiveForm::end() ?>

@@ -18,7 +18,6 @@ class LecturerForm extends Model
 
     public function addLecturer()
     {
-        \Yii::error($this->name . $this->surname);
         $lecturer = new Lecturer();
 
         $lecturer->name = $this->name;
