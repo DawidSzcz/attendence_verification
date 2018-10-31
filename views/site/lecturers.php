@@ -2,7 +2,7 @@
     'dataProvider' => $lecturers
 ]);?>
 
-<?php echo __DIR__; $form = \yii\bootstrap\ActiveForm::begin(['action' => 'addlecturer']); ?>
+<?php $form = \yii\bootstrap\ActiveForm::begin(['action' => 'addlecturer']); ?>
 
 <?= $form->field($model, 'name')->textInput() ?>
 
