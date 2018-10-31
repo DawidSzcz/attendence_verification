@@ -66,6 +66,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        Yii::error(__DIR__);
         return $this->render('index');
     }
 
