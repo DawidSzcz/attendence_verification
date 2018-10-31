@@ -3,7 +3,6 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Html;
-echo __DIR__;
 $this->title = 'About';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

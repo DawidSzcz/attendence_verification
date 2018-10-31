@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'sqlite:/home/kazik/Documents/attendence_verifier/basic/db',
+    'dsn' => 'sqlite:/app/db',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',
