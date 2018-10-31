@@ -66,7 +66,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->redirect('/site/lectures');
+        return $this->render('index');
     }
 
     /**
