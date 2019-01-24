@@ -3,11 +3,13 @@
 /* @var $this yii\web\View */
 
 $this->title = 'My Yii Application';
+
+$my_env_var = getenv('DATABASE_URL');
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Congrsssssssssssssssatulations!</h1>
+        <h1><?=$my_env_var?></h1>
 
         <p class="lead">You have successfully created your Yii-powered application.</p>
 
