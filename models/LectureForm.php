@@ -20,7 +20,7 @@ class LectureForm extends \yii\base\Model
     {
         $lecture = new Lecture();
 
-        $lecture->time = $this->date_time;
+        $lecture->date_time = $this->date_time;
         $lecture->name = $this->name;
         $lecture->lecturer_id = $this->lecturer_id;
         $lecture->classroom = $this->classroom;

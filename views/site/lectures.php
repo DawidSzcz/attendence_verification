@@ -1,6 +1,7 @@
 <?php
     use \yii\bootstrap\ActiveForm;
     use dosamigos\datetimepicker\DateTimePicker;
+    use yii\helpers\Url;
 ?>
 
 <?= \yii\grid\GridView::widget([
@@ -11,7 +12,7 @@
 <?php $form = ActiveForm::begin([
         'id' => 'lecture-form',
         'layout' => 'horizontal',
-        'action' => 'addlecture'
+        'action' => Url::to(['addlecture'])
     ]);
 ?>
 

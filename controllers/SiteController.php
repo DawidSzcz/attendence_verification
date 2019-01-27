@@ -14,6 +14,7 @@ use app\models\ContactForm;
 use app\models\LectureForm;
 use app\models\LecturerForm;
 use yii\data\ActiveDataProvider;
+use \yii\helpers\Url;
 
 class SiteController extends Controller
 {
@@ -43,21 +44,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
-        ];
-    }
 
     /**
      * Displays homepage.
@@ -66,7 +52,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        echo __DIR__;
         return $this->render('index');
     }
 
@@ -142,22 +127,25 @@ class SiteController extends Controller
         $model->load(Yii::$app->request->post());
         $model->addLecture();
 
-        return $this->redirect('lectures');
+        return $this->redirect(Url::to(['lectures']));
     }
 
     public function actionLecturers()
     {
-        return $this->render('lecturers', [ 'model' => new LecturerForm(), 'lecturers' => new ActiveDataProvider(['query' => Lecturer::find()])]);
+         return $this->render('lecturers', [ 'model' => new LecturerForm(), 'lecturers' => new ActiveDataProvider(['query' => Lecturer::find()])]);
     }
 
     public function actionAddlecturer()
     {
         $model = new LecturerForm();
+        Yii::error(var_export($model, true));
 
         $model->load(\Yii::$app->request->post());
-        $model->addLecturer();
+        Yii::error(var_export($model, true));
+        if ($model->validate()) {
+            $model->addLecturer();
+        }
 
-
-        return $this->redirect('lecturers');
+        return $this->redirect(Url::to(['lecturers']));
     }
 }
