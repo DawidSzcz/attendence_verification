@@ -2,19 +2,14 @@
 
 namespace app\controllers;
 
-use app\models\Lecture;
-use app\models\Lecturer;
+use app\models\ContactForm;
+use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
-use app\models\LectureForm;
-use app\models\LecturerForm;
-use yii\data\ActiveDataProvider;
-use \yii\helpers\Url;
+use yii\helpers\Html;
 
 class SiteController extends Controller
 {
@@ -44,6 +39,31 @@ class SiteController extends Controller
         ];
     }
 
+    public function beforeAction()
+    {
+        Yii::$app->view->params['menu'] = Yii::$app->user->isGuest
+            ? [
+                ['label' => 'Home', 'url' => ['/site/login']],
+                ['label' => 'About', 'url' => ['/site/about']],
+                ['label' => 'Contact', 'url' => ['/site/contact']]
+            ]
+            : [
+                ['label' => 'Lectures', 'url' => ['/lectures']],
+                ['label' => 'About', 'url' => ['/site/about']],
+                ['label' => 'Contact', 'url' => ['/site/contact']],
+                '<li>'
+                . Html::beginForm(['/site/logout'], 'post')
+                . Html::submitButton(
+                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    ['class' => 'btn btn-link logout']
+                )
+                . Html::endForm()
+                . '</li>'
+            ];
+
+        return true;
+    }
+
 
     /**
      * Displays homepage.
@@ -52,7 +72,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return Yii::$app->user->isGuest ? $this->redirect(['login']) : $this->redirect(['/lectures']);
     }
 
     /**
@@ -113,39 +133,5 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
-    }
-
-    public function actionLectures()
-    {
-        return $this->render('lectures', [ 'model' => new LectureForm(), 'lectures' => new ActiveDataProvider(['query' => Lecture::find()])]);
-    }
-
-    public function actionAddlecture()
-    {
-        $model = new LectureForm();
-
-        $model->load(Yii::$app->request->post());
-        $model->addLecture();
-
-        return $this->redirect(Url::to(['lectures']));
-    }
-
-    public function actionLecturers()
-    {
-         return $this->render('lecturers', [ 'model' => new LecturerForm(), 'lecturers' => new ActiveDataProvider(['query' => Lecturer::find()])]);
-    }
-
-    public function actionAddlecturer()
-    {
-        $model = new LecturerForm();
-        Yii::error(var_export($model, true));
-
-        $model->load(\Yii::$app->request->post());
-        Yii::error(var_export($model, true));
-        if ($model->validate()) {
-            $model->addLecturer();
-        }
-
-        return $this->redirect(Url::to(['lecturers']));
     }
 }
