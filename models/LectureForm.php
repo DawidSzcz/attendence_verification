@@ -46,7 +46,6 @@ class LectureForm extends \yii\base\Model
                 $date = strtotime($this->first_date . ' ' .$this->time);
                 $end = strtotime($this->last_date . ' ' .$this->time);
                 while ($date <= $end) {
-                    \Yii::error(var_export($date, true));
                     $lecture_date = new LectureDate();
                     $lecture_date->ts = date('Y-m-d H:i:s',$date);
                     $lecture_date->lecture_id = $lecture->getPrimaryKey();
