@@ -72,8 +72,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        echo 'sssssssssss';
-        return;
+        return Yii::$app->user->isGuest ? $this->redirect(['login']) : $this->redirect(['/lectures']);
     }
 
     /**
