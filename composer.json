@@ -14,21 +14,19 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=7.0.33",
         "yiisoft/yii2": "~2.0.5",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "2amigos/yii2-date-time-picker-widget" : "~1.0",
+        "2amigos/yii2-date-picker-widget" : "~1.0",
+        "kartik-v/yii2-widget-timepicker": "*",
         "fxp/composer-asset-plugin": "^1.4"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*",
-
-        "codeception/base": "^2.2.3",
-        "codeception/verify": "~0.3.1",
-        "codeception/specify": "~0.4.3",
         "purrweb/yii2-heroku": "*"
     },
     "config": {

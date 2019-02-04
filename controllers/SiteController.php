@@ -39,7 +39,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function beforeAction()
+    public function beforeAction($action)
     {
         Yii::$app->view->params['menu'] = Yii::$app->user->isGuest
             ? [

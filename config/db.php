@@ -4,7 +4,6 @@ $url = parse_url(getenv("DATABASE_URL"));
 $dsn = 'pgsql:host='.$url['host'].';port='.$url['port'].';dbname='.substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
-Yii::error(var_export($url, true));
 
 return [
     'class' => 'yii\db\Connection',

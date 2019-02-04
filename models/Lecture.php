@@ -10,4 +10,8 @@ namespace app\models;
 
 class Lecture extends \yii\db\ActiveRecord
 {
+    public function getLectureDates()
+    {
+        return $this->hasMany(LectureDate::class, ['lecture_id' => 'id'])->orderBy('ts');
+    }
 }
