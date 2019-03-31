@@ -1,7 +1,9 @@
 <?php
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use \app\models\LectureDate;
+use dosamigos\datetimepicker\DateTimePicker;
 
 ?>
 
@@ -34,3 +36,20 @@ use yii\helpers\Url;
         ],
     ]
 ]); ?>
+
+<h2>Add new Lecture Date</h2>
+<?php $form = ActiveForm::begin([
+    'id' => 'lecture-form',
+    'action' => Url::to(['addlecturedate'])
+]);
+?>
+<?= $form->field(new LectureDate(), 'ts')->widget(DateTimePicker::class, [
+    'language' => 'en',
+    'size' => 'ms',
+    'clientOptions' => [
+        'autoclose' => true,
+        'todayBtn' => true
+    ]]); ?>
+<?= Html::hiddenInput('id', $lecture->id)?>
+<?= \yii\helpers\Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-date-button']); ?>
+<?php ActiveForm::end() ?>

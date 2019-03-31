@@ -23,13 +23,13 @@ class LecturesController extends Controller
      */
     public function behaviors()
     {
+        \Yii::error('behaviors');
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow' => false,
                     ],
                 ],
             ],
@@ -75,6 +75,17 @@ class LecturesController extends Controller
         $model->addLecture();
 
         return $this->redirect(Url::to(['index']));
+    }
+
+
+    public function actionAddlecturedate()
+    {
+        $model = new LectureDate();
+        $model->lecture_id = \Yii::$app->request->post('id');
+        $model->setAttributes(\Yii::$app->request->post('LectureDate'), false);
+        $model->save();
+
+        return $this->redirect(Url::to(['view', 'id' => \Yii::$app->request->post('id')]));
     }
 
     public function actionView($id)
@@ -137,12 +148,10 @@ class LecturesController extends Controller
 
     public function actionDeletedate($id)
     {
+        $lecture_id = LectureDate::findOne($id)->lecture_id;
         LectureDate::findOne($id)->delete();
 
-        return $this->render('view', [
-            'lecture' => Lecture::findOne($id),
-            'lecture_dates' => new ArrayDataProvider(['allModels' => Lecture::findOne($id)->lectureDates])
-        ]);
+        return $this->redirect(Url::to(['view', 'id' => $lecture_id]));
     }
 
 }
