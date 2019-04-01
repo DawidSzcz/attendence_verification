@@ -50,7 +50,7 @@ class RegisterForm extends \yii\base\Model
     public function uniqueEmail($attribute, $email)
     {
         if(!$this->hasErrors() && !empty(\app\models\User::findByEmail($this->$attribute))) {
-            $this->addError($attribute, Content::display('uniqueMail', 'Taki email już istnieje'));
+            $this->addError($attribute, Content::display('uniqueMail', 'TakiTakiTakiTaki email już istnieje'));
         }
     }
 }
