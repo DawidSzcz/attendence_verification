@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 class SiteController extends Controller
 {
@@ -72,7 +73,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return Yii::$app->user->isGuest ? $this->redirect(['login']) : $this->redirect(['/lectures']);
+        return \Url::to(['login']);
     }
 
     /**
