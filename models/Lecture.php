@@ -14,4 +14,9 @@ class Lecture extends \yii\db\ActiveRecord
     {
         return $this->hasMany(LectureDate::class, ['lecture_id' => 'id'])->orderBy('ts');
     }
+
+    public function getParticipants()
+    {
+        return $this->hasMany(Participant::class, ['id' => 'participant_id'])->viaTable('participation', ['lecture_id' => 'id']);
+    }
 }

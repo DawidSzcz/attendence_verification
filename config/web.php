@@ -30,12 +30,16 @@ $config = [
             'useFileTransport' => true,
         ],
         'log' => [
-            'traceLevel' => 3,
+            'traceLevel' => 1,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error'],
+                    'levels' => ['error', 'warning'],
                     'logFile' => 'logs-web.log'
+                ],
+                [
+                    'class' => 'yii\log\SyslogTarget',
+                    'levels' => ['error', 'warning'],
                 ],
             ],
         ],

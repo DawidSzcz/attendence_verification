@@ -1,9 +1,9 @@
 <?php
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
-use \app\models\LectureDate;
+use app\models\LectureDate;
 use dosamigos\datetimepicker\DateTimePicker;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 
@@ -12,11 +12,13 @@ use dosamigos\datetimepicker\DateTimePicker;
 ]) ?>
 <?= $form->field($lecture, 'name') ?>
 <?= $form->field($lecture, 'description') ?>
-<?= Html::hiddenInput('id', $lecture->id)?>
+<?= Html::hiddenInput('id', $lecture->id) ?>
 
 <?= Html::submitButton('Update', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
 <?php ActiveForm::end() ?>
 
+
+<h1>Terminy wykładu:</h1>
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $lecture_dates,
     'columns' => [
@@ -26,7 +28,7 @@ use dosamigos\datetimepicker\DateTimePicker;
             'header' => 'Actions',
             'template' => '{view} {delete}',
             'urlCreator' => function ($action, $model, $key, $index, $column) {
-                if('view' === $action) {
+                if ('view' === $action) {
                     return Url::to(['viewdate', 'id' => $model->id]);
                 } else if ('delete' === $action) {
                     return Url::to(['deletedate', 'id' => $model->id]);
@@ -37,9 +39,31 @@ use dosamigos\datetimepicker\DateTimePicker;
     ]
 ]); ?>
 
+<h1>Uczestnicy wykładu</h1>
+
+<?= \yii\grid\GridView::widget([
+    'dataProvider' => $participants,
+    'columns' => [
+        'id',
+        'name',
+        'nr_albumu',
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header' => 'Actions',
+            'template' => '{delete}',
+            'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture){
+                if ('delete' === $action) {
+                    return Url::to(['deleteparticipant', 'participant_id' => $model->id, 'lecture_id' => $lecture->id]);
+                }
+                throw new \yii\base\Exception(sprintf('Undefined action [%s] in lecture view', $action));
+            }
+        ],
+    ]
+]); ?>
+
 <h2>Add new Lecture Date</h2>
 <?php $form = ActiveForm::begin([
-    'id' => 'lecture-form',
+    'id' => 'lecture-date-form',
     'action' => Url::to(['addlecturedate'])
 ]);
 ?>
@@ -50,6 +74,23 @@ use dosamigos\datetimepicker\DateTimePicker;
         'autoclose' => true,
         'todayBtn' => true
     ]]); ?>
-<?= Html::hiddenInput('id', $lecture->id)?>
-<?= \yii\helpers\Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-date-button']); ?>
+<?= Html::hiddenInput('id', $lecture->id) ?>
+<?= Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-date-button']); ?>
 <?php ActiveForm::end() ?>
+
+<h2>Add new Participant</h2>
+<?php $form = ActiveForm::begin([
+    'id' => 'lecture-date-form',
+    'action' => Url::to(['addparticipant']),
+    'method' => 'get'
+]); ?>
+
+<?= Html::label('Numer albumu: '); ?>
+<?= Html::textInput('nr_albumu'); ?>
+<?= Html::hiddenInput('lecture_id', $lecture->id) ?>
+<?= Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-date-button']); ?>
+
+<?php ActiveForm::end() ?>
+
+
+<?= Html::a('Generuj listę obecności', Url::to(['generatelist', 'lecture_id' => $lecture->id]), ['class' => 'btn btn-primary']); ?>

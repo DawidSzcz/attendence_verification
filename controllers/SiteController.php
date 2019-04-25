@@ -22,12 +22,17 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['logout', 'register', 'login'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['register', 'login'],
+                        'allow' => true,
+                        'roles' => ['?'],
                     ],
                 ],
             ],
@@ -36,6 +41,18 @@ class SiteController extends Controller
                 'actions' => [
                     'logout' => ['post'],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
             ],
         ];
     }
@@ -62,7 +79,7 @@ class SiteController extends Controller
                 . '</li>'
             ];
 
-        return true;
+        return parent::beforeAction($action);
     }
 
 
@@ -73,7 +90,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return \Url::to(['login']);
+        return Yii::$app->user->isGuest ? $this->redirect(['login']) : $this->redirect(['/lectures']);
     }
 
     /**
@@ -92,6 +109,18 @@ class SiteController extends Controller
             return $this->goBack();
         }
         return $this->render('login', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionRegister()
+    {
+        $model = new \app\models\RegisterForm();
+        if ($model->load(Yii::$app->request->post()) && $model->register()) {
+            return $this->goBack();
+        }
+
+        return $this->render('register', [
             'model' => $model,
         ]);
     }

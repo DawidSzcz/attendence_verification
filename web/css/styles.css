@@ -1,0 +1,9 @@
+.table-striped tbody tr.green {
+  background: greenyellow;
+}
+.table-striped tbody tr.red {
+  background: indianred;
+}
+.unenrolled .table-striped tbody tr {
+  background: lightyellow;
+}
