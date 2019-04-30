@@ -1,5 +1,7 @@
 <?php
+
 use dosamigos\datetimepicker\DateTimePicker;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -23,8 +25,32 @@ use yii\widgets\ActiveForm;
 <?= Html::submitButton('Update', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
 <?php ActiveForm::end() ?>
 
-<?= \yii\grid\GridView::widget([
+<?= GridView::widget([
     'dataProvider' => $participants,
+    'columns' => [
+        'id',
+        'nr_albumu',
+        'name',
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header' => 'Actions',
+            'template' => '{delete} {add}',
+            'buttons' => [
+                'add' => function ($url, $model, $key) use ($lecture_date) {
+                    return !$model->isPresent($lecture_date->id) ? Html::a('add', $url) : '';
+                },
+                'delete' => function ($url, $model, $key) use ($lecture_date) {
+                    return $model->isPresent($lecture_date->id) ? Html::a('delete', $url) : '';
+                }
+            ],
+            'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_date) {
+                return $model->isPresent($lecture_date->id) ?
+                    Url::to(['deletepresence', 'participant_id' => $model->id, 'lecture_date_id' => $lecture_date->id]) :
+                    Url::to(['addpresence', 'participant_id' => $model->id, 'lecture_date_id' => $lecture_date->id]);
+            }
+        ],
+    ],
+
     'rowOptions' => function ($model, $key, $index, $grid) use ($lecture_date) {
         return [
             'class' => $model->isPresent($lecture_date->id) ? 'green' : 'red'

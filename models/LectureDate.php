@@ -25,4 +25,13 @@ class LectureDate extends \yii\db\ActiveRecord
         return $this->hasMany(Participant::class, ['id' => 'participant_id'])
             ->viaTable('presence', ['lecture_date_id' => 'id']);
     }
+
+    public function beforeDelete()
+    {
+        foreach(Presence::findAll(['lecture_date_id' => $this->id]) as $presence) {
+            $presence->delete();
+        }
+
+        return parent::beforeDelete();
+    }
 }

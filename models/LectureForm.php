@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\base\Exception;
+use yii\web\UploadedFile;
 
 class LectureForm extends \yii\base\Model
 {
@@ -12,6 +13,7 @@ class LectureForm extends \yii\base\Model
     public $grain;
     public $last_date;
     public $once_date;
+    public $participants;
     public $time;
 
     const WEEK = 604800;
@@ -33,6 +35,28 @@ class LectureForm extends \yii\base\Model
         $lecture->name = $this->name;
         $lecture->description = $this->description;
         $lecture->save();
+
+        $file = UploadedFile::getInstance($this, 'participants');
+
+        foreach (explode(';', file_get_contents($file->tempName)) as $nr_albumu) {
+            if(!empty($nr_albumu = trim($nr_albumu))) {
+                $participant = Participant::findOne(['nr_albumu' => $nr_albumu]) ?? new Participant();
+
+                if ($participant->isNewRecord) {
+                    $participant->nr_albumu = $nr_albumu;
+                    $participant->name = 'Dawid Szczyrk';
+
+                    $participant->save();
+                }
+
+                $participation = new Participation();
+                $participation->lecture_id = $lecture->getPrimaryKey();
+                $participation->participant_id = $participant->getPrimaryKey();
+                $participation->save();
+            }
+        }
+
+
 
         switch ($this->grain) {
             case 'once':

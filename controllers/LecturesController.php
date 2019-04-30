@@ -84,7 +84,7 @@ class LecturesController extends Controller
 
     public function actionAddlecturedate()
     {
-        
+
 
         $model = new LectureDate();
         $model->lecture_id = \Yii::$app->request->post('id');
@@ -201,6 +201,28 @@ class LecturesController extends Controller
         Participation::findOne(['participant_id' => $participant_id, 'lecture_id' => $lecture_id])->delete();
 
         return $this->redirect(Url::to(['view', 'id' => $lecture_id]));
+    }
+
+    public function actionAddpresence($participant_id, $lecture_date_id)
+    {
+        $this->checkOwner(LectureDate::findOne($lecture_date_id)->lecture_id);
+
+        $presence = new Presence();
+        $presence->participant_id = $participant_id;
+        $presence->lecture_date_id = $lecture_date_id;
+
+        $presence->save();
+
+        return $this->redirect(Url::to(['viewdate', 'id' => $lecture_date_id]));
+    }
+
+    public function actionDeletepresence($participant_id, $lecture_date_id)
+    {
+        $this->checkOwner(LectureDate::findOne($lecture_date_id)->lecture_id);
+
+        Presence::findOne(['participant_id' => $participant_id, 'lecture_date_id' => $lecture_date_id])->delete();
+
+        return $this->redirect(Url::to(['viewdate', 'id' => $lecture_date_id]));
     }
 
     public function actionAddparticipant($nr_albumu, $lecture_id)

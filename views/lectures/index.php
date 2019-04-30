@@ -53,6 +53,8 @@ use yii\helpers\Html;
         'format' => 'dd-M-yyyy',
         'todayBtn' => true
     ]]); ?>
+<?= $form->field($model, 'participants')->fileInput() ?>
+
 <?= $form->field($model, 'time')->widget(TimePicker::class, [
     'name' => 'time',
     'pluginOptions' => [

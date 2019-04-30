@@ -2,6 +2,7 @@
 use app\models\LectureDate;
 use dosamigos\datetimepicker\DateTimePicker;
 use yii\bootstrap\ActiveForm;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -19,7 +20,7 @@ use yii\helpers\Url;
 
 
 <h1>Terminy wykładu:</h1>
-<?= \yii\grid\GridView::widget([
+<?= GridView::widget([
     'dataProvider' => $lecture_dates,
     'columns' => [
         'ts',
@@ -41,7 +42,7 @@ use yii\helpers\Url;
 
 <h1>Uczestnicy wykładu</h1>
 
-<?= \yii\grid\GridView::widget([
+<?= GridView::widget([
     'dataProvider' => $participants,
     'columns' => [
         'id',

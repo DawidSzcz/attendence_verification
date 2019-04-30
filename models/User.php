@@ -99,4 +99,19 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         }
         return false;
     }
+
+    public function getLectures()
+    {
+        return $this->hasMany(Lecture::class, ['owner' => 'id']);
+    }
+
+    public function beforeDelete()
+    {
+        foreach($this->getLectures() as $lecture) {
+            $lecture->delete();
+        }
+
+
+        return parent::beforeDelete();
+    }
 }

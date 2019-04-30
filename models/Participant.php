@@ -29,4 +29,18 @@ class Participant extends \yii\db\ActiveRecord
     {
         return null !== Participation::findOne(['lecture_id' => $lecture_id, 'participant_id' => $this->id]);
     }
+
+    public function beforeDelete()
+    {
+        foreach($this->getPresences() as $presence) {
+            $presence->delete();
+        }
+
+
+        foreach($this->getParticipations() as $participation) {
+            $participation->delete();
+        }
+
+        return parent::beforeDelete();
+    }
 }

@@ -31,3 +31,7 @@ tests/_support/_generated
 
 "web/logs-web.log" 
 logs-web.log
+logs.log
+"web/logs.log"
+
+.user.ini
