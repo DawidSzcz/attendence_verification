@@ -15,6 +15,7 @@ class LectureForm extends \yii\base\Model
     public $once_date;
     public $participants;
     public $time;
+    public $owner_id;
 
     const WEEK = 604800;
     const MONTH = 2419200;
@@ -23,7 +24,7 @@ class LectureForm extends \yii\base\Model
     public function rules()
     {
         return [
-            [['name', 'description', 'grain', 'time'], 'required'],
+            [['name', 'description', 'grain', 'time', 'owner_id'], 'required'],
             [['once_date', 'first_date', 'last_date'], 'date']
         ];
     }
@@ -34,6 +35,7 @@ class LectureForm extends \yii\base\Model
 
         $lecture->name = $this->name;
         $lecture->description = $this->description;
+        $lecture->owner = $this->owner_id;
         $lecture->save();
 
         $file = UploadedFile::getInstance($this, 'participants');

@@ -63,4 +63,6 @@ use yii\helpers\Html;
 ]); ?>
 
 <?= \yii\helpers\Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
+
+<?= Html::hiddenInput("LectureForm[owner_id]", \Yii::$app->user->id) ?>
 <?php ActiveForm::end() ?>
