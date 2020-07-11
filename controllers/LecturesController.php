@@ -8,6 +8,7 @@ use app\models\LectureForm;
 use app\models\Participant;
 use app\models\Participation;
 use app\models\Presence;
+use app\models\Services\FileHandler;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
@@ -146,9 +147,7 @@ class LecturesController extends Controller
         $model->setAttributes(\Yii::$app->request->post('LectureDate'), false);
         $model->update();
 
-        $file = UploadedFile::getInstanceByName('file');
-
-        foreach (explode(';', file_get_contents($file->tempName)) as $album_no) {
+        foreach (FileHandler::getParticipantIds('file') as $album_no) {
             if (!empty(trim($album_no))) {
 
                 $participant = Participant::findOne(['nr_albumu' => trim($album_no)]) ?? new Participant();

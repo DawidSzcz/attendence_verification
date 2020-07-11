@@ -7,3 +7,7 @@
 .unenrolled .table-striped tbody tr {
   background: lightyellow;
 }
+.lectures-form {
+  width: 80%;
+  margin: 0 auto
+}
