@@ -8,6 +8,12 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'components' => [
+        'studentBase' => [
+            'class' => 'app\components\StudentBase',
+            'url' => 'http://localhost:8000/api/students',
+            'auth_user' => getenv('STUDENTS_USER'),
+            'auth_password' => getenv('STUDENTS_PASS'),
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'BtcAMn0vTalRnTdxIvKXv7dkB-URkXCQ',

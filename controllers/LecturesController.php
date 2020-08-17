@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\StudentBase;
 use app\models\Lecture;
 use app\models\LectureDate;
 use app\models\LectureForm;
@@ -85,8 +86,6 @@ class LecturesController extends Controller
 
     public function actionAddlecturedate()
     {
-
-
         $model = new LectureDate();
         $model->lecture_id = \Yii::$app->request->post('id');
         $model->setAttributes(\Yii::$app->request->post('LectureDate'), false);
@@ -98,11 +97,18 @@ class LecturesController extends Controller
     public function actionView($id)
     {
         $this->checkOwner(Lecture::findOne($id)->owner);
+        $lecture = Lecture::findOne($id);
+
+        $album_nos = array_map(function (Participant $participant) {
+            return $participant->nr_albumu;
+        }, $lecture->participants);
+
+        $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos($album_nos);
 
         return $this->render('view', [
-            'lecture' => $lecture = Lecture::findOne($id),
+            'lecture' => $lecture,
             'lecture_dates' => new ArrayDataProvider(['allModels' => $lecture->lectureDates]),
-            'participants' => new ArrayDataProvider(['allModels' => $lecture->participants])
+            'participants' => new ArrayDataProvider(['allModels' => $students])
         ]);
 
     }
@@ -231,8 +237,10 @@ class LecturesController extends Controller
         $participant = Participant::findOne(['nr_albumu' => $nr_albumu]) ?? new Participant();
 
         if ($participant->isNewRecord) {
+            $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos([$nr_albumu]);
+            $student_data = reset($students);
             $participant->nr_albumu = $nr_albumu;
-            $participant->name = 'Dawid Szczyrk';
+            $participant->card_uid = $student_data['card_uid'];
 
             $participant->save();
         }

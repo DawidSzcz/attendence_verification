@@ -29,8 +29,7 @@ use yii\widgets\ActiveForm;
     'dataProvider' => $participants,
     'columns' => [
         'id',
-        'nr_albumu',
-        'name',
+        'card_uid',
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Actions',

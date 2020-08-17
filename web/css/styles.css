@@ -11,3 +11,32 @@
   width: 80%;
   margin: 0 auto
 }
+
+.add-participant {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.add-participant p.label {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.add-participant .form-group{
+  margin: 0;
+  width: 600px;
+  max-width: 100%;
+}
+
+.footer {
+  width: 100%;
+}
+.lecture_collapse {
+  margin: 20px 0;
+}
+.lecture_collapse a {
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}

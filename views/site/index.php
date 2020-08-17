@@ -4,7 +4,7 @@
 
 $this->title = 'My Yii Application';
 
-$my_env_var = getenv('DATABASE_URL');
+$my_env_var = getenv('DATABASE_VERIFIER_URL');
 ?>
 <div class="site-index">
 
