@@ -10,7 +10,7 @@ $config = [
     'components' => [
         'studentBase' => [
             'class' => 'app\components\StudentBase',
-            'url' => 'http://localhost:8000/api/students',
+            'url' => getenv('STUDENTS_URL'),
             'auth_user' => getenv('STUDENTS_USER'),
             'auth_password' => getenv('STUDENTS_PASS'),
         ],
