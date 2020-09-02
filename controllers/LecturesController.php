@@ -10,6 +10,8 @@ use app\models\Participant;
 use app\models\Participation;
 use app\models\Presence;
 use app\models\Services\FileHandler;
+use app\models\Services\RaportGenerator;
+use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
@@ -78,7 +80,7 @@ class LecturesController extends Controller
         $model = new LectureForm();
 
         $model->load(\Yii::$app->request->post());
-        $model->addLecture();
+        $model->addLecture(\Yii::$app->user->id);
 
         return $this->redirect(Url::to(['index']));
     }
@@ -86,12 +88,15 @@ class LecturesController extends Controller
 
     public function actionAddlecturedate()
     {
+        $id = \Yii::$app->request->post('id');
+        $this->checkOwner(Lecture::findOne($id)->owner);
+
         $model = new LectureDate();
-        $model->lecture_id = \Yii::$app->request->post('id');
+        $model->lecture_id = $id;
         $model->setAttributes(\Yii::$app->request->post('LectureDate'), false);
         $model->save();
 
-        return $this->redirect(Url::to(['view', 'id' => \Yii::$app->request->post('id')]));
+        return $this->redirect(Url::to(['view', 'id' => $id]));
     }
 
     public function actionView($id)
@@ -100,7 +105,7 @@ class LecturesController extends Controller
         $lecture = Lecture::findOne($id);
 
         $album_nos = array_map(function (Participant $participant) {
-            return $participant->nr_albumu;
+            return $participant->album_no;
         }, $lecture->participants);
 
         $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos($album_nos);
@@ -117,16 +122,32 @@ class LecturesController extends Controller
     {
         $lecture_date = LectureDate::findOne($id);
         $lecture = Lecture::findOne($lecture_date->lecture_id);
-
         $this->checkOwner($lecture->owner);
+
+        $presences = [];
+        $unenrolled_presences = [];
+
+        /** @var Participant $participant */
+        foreach ($lecture->participants as $participant) {
+            $presences[$participant->album_no] = $participant->isPresent($id);
+        }
+
+        /** @var Participant $participant */
+        foreach ($lecture_date->participants as $participant) {
+            if(!$participant->isParticipant($lecture->id)) {
+                $unenrolled_presences[] = $participant->album_no;
+            }
+        }
+
+        $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos(array_keys($presences));
+        $unenrolled = \Yii::$app->studentBase->retrieveStudentsByAlbumNos($unenrolled_presences);
 
         return $this->render('view_date', [
             'lecture_date' => $lecture_date,
-            'participants' => new ArrayDataProvider(['allModels' => $lecture->participants]),
+            'participants' => new ArrayDataProvider(['allModels' => $students]),
+            'presences' => $presences,
             'unenrolled' => new ArrayDataProvider([
-                'allModels' => array_filter($lecture_date->participants, function ($participant) use ($lecture) {
-                    return !$participant->isParticipant($lecture->id);
-                })
+                'allModels' => $unenrolled
             ])
         ]);
 
@@ -153,24 +174,27 @@ class LecturesController extends Controller
         $model->setAttributes(\Yii::$app->request->post('LectureDate'), false);
         $model->update();
 
-        foreach (FileHandler::getParticipantIds('file') as $album_no) {
-            if (!empty(trim($album_no))) {
+        $students = \Yii::$app->studentBase->retrieveStudentsByCardUids(FileHandler::getPresencesCardUids('file'));
 
-                $participant = Participant::findOne(['nr_albumu' => trim($album_no)]) ?? new Participant();
 
-                if ($participant->isNewRecord) {
-                    $participant->nr_albumu = trim($album_no);
-                    $participant->name = 'Dawid Szczyrk';
+        foreach ($students as $student) {
+            if(null === $student) {
+                throw new Exception();
+            }
 
-                    $participant->save();
-                }
+            $participant = Participant::findOne(['album_no' => $student['album_no']]);
 
-                if (null === Presence::findOne(['lecture_date_id' => \Yii::$app->request->post('id'), 'participant_id' => $participant->getPrimaryKey()])) {
-                    $presence = new Presence();
-                    $presence->lecture_date_id = \Yii::$app->request->post('id');
-                    $presence->participant_id = $participant->getPrimaryKey();
-                    $presence->save();
-                }
+            if (null === $participant) {
+                $participant = new Participant();
+                $participant->album_no = $student['album_no'];
+                $participant->save();
+            }
+
+            if (null === Presence::findOne(['lecture_date_id' => \Yii::$app->request->post('id'), 'participant_id' => $participant->getPrimaryKey()])) {
+                $presence = new Presence();
+                $presence->lecture_date_id = \Yii::$app->request->post('id');
+                $presence->participant_id = $participant->getPrimaryKey();
+                $presence->save();
             }
         }
         return $this->redirect(Url::to(['viewdate', 'id' => \Yii::$app->request->post('id')]));
@@ -199,21 +223,22 @@ class LecturesController extends Controller
         return $this->redirect(Url::to(['view', 'id' => $lecture_id]));
     }
 
-    public function actionDeleteparticipant($participant_id, $lecture_id)
+    public function actionDeleteparticipant($participant_album_no, $lecture_id)
     {
         $this->checkOwner(Lecture::findOne($lecture_id)->owner);
 
-        Participation::findOne(['participant_id' => $participant_id, 'lecture_id' => $lecture_id])->delete();
+        Participation::findOne(['participant_id' => Participant::findOne(['album_no' => $participant_album_no])->id, 'lecture_id' => $lecture_id])->delete();
 
         return $this->redirect(Url::to(['view', 'id' => $lecture_id]));
     }
 
-    public function actionAddpresence($participant_id, $lecture_date_id)
+    public function actionAddpresence($participant_album_no, $lecture_date_id)
     {
         $this->checkOwner(LectureDate::findOne($lecture_date_id)->lecture_id);
+        $participant = Participant::findOne(['album_no' => $participant_album_no]);
 
         $presence = new Presence();
-        $presence->participant_id = $participant_id;
+        $presence->participant_id = $participant->id;
         $presence->lecture_date_id = $lecture_date_id;
 
         $presence->save();
@@ -221,28 +246,34 @@ class LecturesController extends Controller
         return $this->redirect(Url::to(['viewdate', 'id' => $lecture_date_id]));
     }
 
-    public function actionDeletepresence($participant_id, $lecture_date_id)
+    public function actionDeletepresence($participant_album_no, $lecture_date_id)
     {
         $this->checkOwner(LectureDate::findOne($lecture_date_id)->lecture_id);
+        $participant = Participant::findOne(['album_no' => $participant_album_no]);
 
-        Presence::findOne(['participant_id' => $participant_id, 'lecture_date_id' => $lecture_date_id])->delete();
+        Presence::findOne(['participant_id' => $participant->id, 'lecture_date_id' => $lecture_date_id])->delete();
 
         return $this->redirect(Url::to(['viewdate', 'id' => $lecture_date_id]));
     }
 
-    public function actionAddparticipant($nr_albumu, $lecture_id)
+    public function actionAddparticipant($album_no, $lecture_id)
     {
         $this->checkOwner(Lecture::findOne($lecture_id)->owner);
 
-        $participant = Participant::findOne(['nr_albumu' => $nr_albumu]) ?? new Participant();
+        $participant = Participant::findOne(['album_no' => $album_no]);
 
-        if ($participant->isNewRecord) {
-            $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos([$nr_albumu]);
-            $student_data = reset($students);
-            $participant->nr_albumu = $nr_albumu;
-            $participant->card_uid = $student_data['card_uid'];
+        if (null === $participant) {
+            $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos([$album_no]);
+            $student = reset($students);
 
+            if (false === $student) {
+                throw new Exception('Student does not exists in student base');
+            }
+
+            $participant = new Participant();
+            $participant->album_no = $album_no;
             $participant->save();
+
         }
 
         $participation = new Participation();
@@ -258,29 +289,11 @@ class LecturesController extends Controller
     {
         $lecture = Lecture::findOne($lecture_id);
         $this->checkOwner($lecture->owner);
+        $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos(array_map(function(Participant $participant) {
+            return $participant->album_no;
+        }, $participants = $lecture->participants));
 
-        $csv = ',';
-
-        foreach ($lecture->participants as $participant) {
-            $csv .= $participant->nr_albumu . ',';
-        }
-        $csv .= "\n";
-
-        $csv .= ',';
-        foreach ($lecture->participants as $participant) {
-            $csv .= $participant->name . ',';
-        }
-        $csv .= "\n";
-
-        foreach ($lecture->lectureDates as $lecture_date) {
-            $csv .= $lecture_date->ts . ',';
-            foreach ($lecture->participants as $participant) {
-                $csv .= $participant->isPresent($lecture_date->id) ? '1,': '0,';
-            }
-            $csv .= "\n";
-        }
-
-        return \Yii::$app->response->sendContentAsFile($csv, $lecture_id . '.csv');
+        return \Yii::$app->response->sendContentAsFile(RaportGenerator::generateRaport($lecture, $students, $participants), $lecture->name . '.csv');
     }
 
     private function checkOwner(int $owner_id)

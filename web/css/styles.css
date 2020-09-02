@@ -32,10 +32,10 @@
 .footer {
   width: 100%;
 }
-.lecture_collapse {
+.lecture-collapse {
   margin: 20px 0;
 }
-.lecture_collapse a {
+.lecture-collapse .panel-title a {
   text-decoration: none;
   display: block;
   width: 100%;

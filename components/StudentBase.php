@@ -44,7 +44,7 @@ class StudentBase extends BaseObject
         $result = [];
 
         if(!empty($values)) {
-            $result = $this->retrieveStudents(sprintf(static::PARAMETRIZED_URL, $this->url, $param, join(',', $values)));
+            $result = $this->retrieveStudents(sprintf(static::PARAMETRIZED_URL, $this->url, $param, base64_encode(join(',', $values))));
         }
         return $result;
     }

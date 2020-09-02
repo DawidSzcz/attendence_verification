@@ -2,7 +2,6 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Collapse;
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -39,7 +38,7 @@ use yii\helpers\Url;
                 'lecture_id' => $lecture->id
             ]),
             'options' => [
-                'class' => 'lecture_collapse'
+                'class' => 'lecture-collapse'
             ]
         ],
         [
@@ -48,6 +47,9 @@ use yii\helpers\Url;
                 'participants' => $participants,
                 'lecture_id' => $lecture->id
             ]),
+            'options' => [
+                'class' => 'lecture-collapse'
+            ]
         ],
     ]
 ]); ?>

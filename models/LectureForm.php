@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\Services\FileHandler;
 use yii\base\Exception;
 use yii\web\UploadedFile;
 
@@ -24,38 +25,43 @@ class LectureForm extends \yii\base\Model
     public function rules()
     {
         return [
-            [['name', 'description', 'grain', 'time', 'owner_id'], 'required'],
-            [['once_date', 'first_date', 'last_date'], 'date']
+            [['name', 'description', 'grain', 'time'], 'required'],
+            ['name', 'string', 'length' => [4, 250]],
+            ['description', 'string', 'length' => [4, 1000]],
+            [['once_date', 'first_date', 'last_date'], 'date'],
+            ['time', 'time']
         ];
     }
 
-    public function addLecture()
+    public function addLecture(int $user_id)
     {
         $lecture = new Lecture();
 
         $lecture->name = $this->name;
         $lecture->description = $this->description;
-        $lecture->owner = $this->owner_id;
+        $lecture->owner = $user_id;
         $lecture->save();
 
-        $file = UploadedFile::getInstance($this, 'participants');
+        $album_nos = FileHandler::getParticipantIds($this, 'participants');
+        $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos($album_nos);
 
-        foreach (explode(';', file_get_contents($file->tempName)) as $nr_albumu) {
-            if(!empty($nr_albumu = trim($nr_albumu))) {
-                $participant = Participant::findOne(['nr_albumu' => $nr_albumu]) ?? new Participant();
-
-                if ($participant->isNewRecord) {
-                    $participant->nr_albumu = $nr_albumu;
-                    $participant->name = 'Dawid Szczyrk';
-
-                    $participant->save();
-                }
-
-                $participation = new Participation();
-                $participation->lecture_id = $lecture->getPrimaryKey();
-                $participation->participant_id = $participant->getPrimaryKey();
-                $participation->save();
+        foreach ($students as $student) {
+            if(null === $student) {
+                throw new Exception();
             }
+
+            $participant = Participant::findOne(['album_no' => $student['album_no']]);
+
+            if (null === $participant) {
+                $participant = new Participant();
+                $participant->album_no = $student['album_no'];
+                $participant->save();
+            }
+
+            $participation = new Participation();
+            $participation->lecture_id = $lecture->getPrimaryKey();
+            $participation->participant_id = $participant->getPrimaryKey();
+            $participation->save();
         }
 
 

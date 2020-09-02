@@ -28,39 +28,58 @@ use yii\widgets\ActiveForm;
 <?= GridView::widget([
     'dataProvider' => $participants,
     'columns' => [
-        'id',
-        'card_uid',
+        'album_no',
+        'name',
+        'surname',
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Actions',
             'template' => '{delete} {add}',
             'buttons' => [
-                'add' => function ($url, $model, $key) use ($lecture_date) {
-                    return !$model->isPresent($lecture_date->id) ? Html::a('add', $url) : '';
+                'add' => function ($url, $model, $key) use ($presences) {
+                    return !$presences[$model['album_no']] ? Html::a('add', $url) : '';
                 },
-                'delete' => function ($url, $model, $key) use ($lecture_date) {
-                    return $model->isPresent($lecture_date->id) ? Html::a('delete', $url) : '';
+                'delete' => function ($url, $model, $key) use ($presences) {
+                    return $presences[$model['album_no']] ? Html::a('delete', $url) : '';
                 }
             ],
-            'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_date) {
-                return $model->isPresent($lecture_date->id) ?
-                    Url::to(['deletepresence', 'participant_id' => $model->id, 'lecture_date_id' => $lecture_date->id]) :
-                    Url::to(['addpresence', 'participant_id' => $model->id, 'lecture_date_id' => $lecture_date->id]);
+            'urlCreator' => function ($action, $model, $key, $index, $column) use ($presences, $lecture_date) {
+                return $presences[$model['album_no']] ?
+                    Url::to(['deletepresence', 'participant_album_no' => $model['album_no'], 'lecture_date_id' => $lecture_date->id]) :
+                    Url::to(['addpresence', 'participant_album_no' => $model['album_no'], 'lecture_date_id' => $lecture_date->id]);
             }
         ],
     ],
 
-    'rowOptions' => function ($model, $key, $index, $grid) use ($lecture_date) {
+    'rowOptions' => function ($model, $key, $index, $grid) use ($presences) {
         return [
-            'class' => $model->isPresent($lecture_date->id) ? 'green' : 'red'
+            'class' => $presences[$model['album_no']] ? 'green' : 'red'
         ];
     }
 
 ]); ?>
-<h1>Dodatkowi słuchacze</h1>
+<h1>Additional Attenders</h1>
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $unenrolled,
     'options' => [
         'class' => 'unenrolled'
+    ],
+    'columns' => [
+        'album_no',
+        'name',
+        'surname',
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header' => 'Actions',
+            'template' => '{delete}',
+            'buttons' => [
+                'delete' => function ($url, $model, $key) {
+                    return Html::a('delete', $url);
+                }
+            ],
+            'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_date) {
+                return Url::to(['deletepresence', 'participant_album_no' => $model['album_no'], 'lecture_date_id' => $lecture_date->id]);
+            }
+        ],
     ]
 ]); ?>

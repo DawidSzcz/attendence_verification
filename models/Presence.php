@@ -8,7 +8,9 @@
 
 namespace app\models;
 
-class Presence extends \yii\db\ActiveRecord
+use yii\db\ActiveRecord;
+
+class Presence extends ActiveRecord
 {
     public function getLectureDate()
     {

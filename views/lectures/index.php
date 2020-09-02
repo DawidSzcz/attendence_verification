@@ -8,7 +8,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
-<h1>Lista wykładów</h1>
+<h1>Lectures List</h1>
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $lectures,
     'columns' => [
@@ -23,7 +23,7 @@ use yii\helpers\Url;
 ]); ?>
 
 
-<h1>Dodaj nowy wykład</h1>
+<h1>Add new Lecture</h1>
 <?php $form = ActiveForm::begin([
     'id' => 'lecture-form',
     'action' => Url::to(['addlecture']),
@@ -64,16 +64,14 @@ use yii\helpers\Url;
         'todayBtn' => true
     ]
 ]); ?>
-<?= $form->field($model, 'participants')->fileInput() ?>
-
 <?= $form->field($model, 'time')->widget(TimePicker::class, [
     'name' => 'time',
     'pluginOptions' => [
         'showSeconds' => false
     ]
 ]); ?>
+<?= $form->field($model, 'participants')->fileInput() ?>
 
-<?= Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
 
-<?= Html::hiddenInput("LectureForm[owner_id]", \Yii::$app->user->id) ?>
+<?= Html::submitButton('Add', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
 <?php ActiveForm::end() ?>

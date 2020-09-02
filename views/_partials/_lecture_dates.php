@@ -11,7 +11,13 @@ use yii\helpers\Url;
 <?= GridView::widget([
     'dataProvider' => $lecture_dates,
     'columns' => [
-        'ts',
+        [
+            'class' => 'yii\grid\Column',
+            'header' => 'Date',
+            'content' => function ($model, $key, $index, $column) {
+                return $model->ts;
+            }
+        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Actions',

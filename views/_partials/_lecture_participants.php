@@ -9,15 +9,16 @@ use yii\helpers\Url;
 <?= GridView::widget([
     'dataProvider' => $participants,
     'columns' => [
-        'id',
-        'card_uid',
+        'album_no',
+        'name',
+        'surname',
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Actions',
             'template' => '{delete}',
             'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_id) {
                 if ('delete' === $action) {
-                    return Url::to(['deleteparticipant', 'participant_id' => $model['id'], 'lecture_id' => $lecture_id]);
+                    return Url::to(['deleteparticipant', 'participant_album_no' => $model['album_no'], 'lecture_id' => $lecture_id]);
                 }
                 throw new \yii\base\Exception(sprintf('Undefined action [%s] in lecture view', $action));
             }
@@ -32,9 +33,9 @@ use yii\helpers\Url;
     'method' => 'get'
 ]); ?>
 
-<?= Html::label('Numer albumu: '); ?>
-<?= Html::textInput('nr_albumu'); ?>
+<?= Html::label('Album number: '); ?>
+<?= Html::textInput('album_no'); ?>
 <?= Html::hiddenInput('lecture_id', $lecture_id) ?>
-<?= Html::submitButton('Dodaj', ['class' => 'btn btn-primary', 'name' => 'lecture-date-button']); ?>
+<?= Html::submitButton('Add', ['class' => 'btn btn-primary', 'name' => 'lecture-date-button']); ?>
 
 <?php ActiveForm::end() ?>
