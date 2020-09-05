@@ -6,10 +6,15 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
+$this->title = $lecture_date->ts;
+$this->params['breadcrumbs'][] = [
+        'label' => $lecture_date->lecture->name,
+        'url' => sprintf('/lectures/view/%d', $lecture_date->lecture_id)
+];
+$this->params['breadcrumbs'][] = $this->title;
+
 ?>
-
-
-<a href="<?= Url::to(['view', 'id' => $lecture_date->lecture_id]); ?>"><h1><?= $lecture_date->lecture->name; ?></h1></a>
+<h1><?= $this->title; ?></h1>
 <?php $form = ActiveForm::begin([
     'action' => Url::to(['updatedate']),
     'options' => ['enctype' => 'multipart/form-data']
@@ -37,23 +42,23 @@ use yii\widgets\ActiveForm;
             'template' => '{delete} {add}',
             'buttons' => [
                 'add' => function ($url, $model, $key) use ($presences) {
-                    return !$presences[$model['album_no']] ? Html::a('add', $url) : '';
+                    return !$presences[$model['id']] ? Html::a('add', $url) : '';
                 },
                 'delete' => function ($url, $model, $key) use ($presences) {
-                    return $presences[$model['album_no']] ? Html::a('delete', $url) : '';
+                    return $presences[$model['id']] ? Html::a('delete', $url) : '';
                 }
             ],
             'urlCreator' => function ($action, $model, $key, $index, $column) use ($presences, $lecture_date) {
-                return $presences[$model['album_no']] ?
-                    Url::to(['deletepresence', 'participant_album_no' => $model['album_no'], 'lecture_date_id' => $lecture_date->id]) :
-                    Url::to(['addpresence', 'participant_album_no' => $model['album_no'], 'lecture_date_id' => $lecture_date->id]);
+                return $presences[$model['id']] ?
+                    Url::to(['deletepresence', 'participant_external_ref' => $model['id'], 'lecture_date_id' => $lecture_date->id]) :
+                    Url::to(['addpresence', 'participant_external_ref' => $model['id'], 'lecture_date_id' => $lecture_date->id]);
             }
         ],
     ],
 
     'rowOptions' => function ($model, $key, $index, $grid) use ($presences) {
         return [
-            'class' => $presences[$model['album_no']] ? 'green' : 'red'
+            'class' => $presences[$model['id']] ? 'green' : 'red'
         ];
     }
 
@@ -78,7 +83,7 @@ use yii\widgets\ActiveForm;
                 }
             ],
             'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_date) {
-                return Url::to(['deletepresence', 'participant_album_no' => $model['album_no'], 'lecture_date_id' => $lecture_date->id]);
+                return Url::to(['deletepresence', 'participant_external_ref' => $model['id'], 'lecture_date_id' => $lecture_date->id]);
             }
         ],
     ]

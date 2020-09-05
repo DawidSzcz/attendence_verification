@@ -24,7 +24,7 @@ class FileHandler
         $file = UploadedFile::getInstance($model, $file_name);
 
         return null !== $file
-            ? array_filter(rray_unique(explode(static::PARTICIPANTS_DELIMINER, file_get_contents($file->tempName))))
+            ? array_filter(array_unique(explode(static::PARTICIPANTS_DELIMINER, file_get_contents($file->tempName))))
             : [];
     }
 }

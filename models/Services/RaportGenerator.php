@@ -24,7 +24,7 @@ class RaportGenerator
         $csv .= PHP_EOL;
 
         foreach ($participants as $participant) {
-            $student = $students[$participant->album_no];
+            $student = $students[$participant->external_ref];
 
             $csv .= $student['album_no'] . static::DELIMITER . $student['name'] . static::DELIMITER . $student['surname'];
 

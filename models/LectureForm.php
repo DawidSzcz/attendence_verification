@@ -45,41 +45,41 @@ class LectureForm extends \yii\base\Model
         $album_nos = FileHandler::getParticipantIds($this, 'participants');
         $students = \Yii::$app->studentBase->retrieveStudentsByAlbumNos($album_nos);
 
-        foreach ($students as $student) {
-            if(null === $student) {
-                throw new Exception();
+        foreach ($students as $album_no => $student) {
+            if ([] === $student) {
+                \Yii::$app->session->addFlash('notice', sprintf("Unknown student with album number: %s", $album_no));
+            } else {
+
+                $participant = Participant::findOne(['external_ref' => $student['id']]);
+
+                if (null === $participant) {
+                    $participant = new Participant();
+                    $participant->external_ref = $student['id'];
+                    $participant->save();
+                }
+
+                $participation = new Participation();
+                $participation->lecture_id = $lecture->getPrimaryKey();
+                $participation->participant_id = $participant->getPrimaryKey();
+                $participation->save();
             }
-
-            $participant = Participant::findOne(['album_no' => $student['album_no']]);
-
-            if (null === $participant) {
-                $participant = new Participant();
-                $participant->album_no = $student['album_no'];
-                $participant->save();
-            }
-
-            $participation = new Participation();
-            $participation->lecture_id = $lecture->getPrimaryKey();
-            $participation->participant_id = $participant->getPrimaryKey();
-            $participation->save();
         }
-
 
 
         switch ($this->grain) {
             case 'once':
                 $lecture_date = new LectureDate();
-                $lecture_date->ts = $this->once_date . ' ' .$this->time;
+                $lecture_date->ts = $this->once_date . ' ' . $this->time;
                 $lecture_date->lecture_id = $lecture->getPrimaryKey();
 
                 $lecture_date->save();
                 break;
             case 'weekly':
-                $date = strtotime($this->first_date . ' ' .$this->time);
-                $end = strtotime($this->last_date . ' ' .$this->time);
+                $date = strtotime($this->first_date . ' ' . $this->time);
+                $end = strtotime($this->last_date . ' ' . $this->time);
                 while ($date <= $end) {
                     $lecture_date = new LectureDate();
-                    $lecture_date->ts = date('Y-m-d H:i:s',$date);
+                    $lecture_date->ts = date('Y-m-d H:i:s', $date);
                     $lecture_date->lecture_id = $lecture->getPrimaryKey();
 
                     $lecture_date->save();
@@ -88,11 +88,11 @@ class LectureForm extends \yii\base\Model
                 }
                 break;
             case 'monthly':
-                $date = strtotime($this->first_date . ' ' .$this->time);
-                $end = strtotime($this->last_date . ' ' .$this->time);
+                $date = strtotime($this->first_date . ' ' . $this->time);
+                $end = strtotime($this->last_date . ' ' . $this->time);
                 while ($date <= $end) {
                     $lecture_date = new LectureDate();
-                    $lecture_date->ts = date('Y-m-d H:i:s',$date);
+                    $lecture_date->ts = date('Y-m-d H:i:s', $date);
                     $lecture_date->lecture_id = $lecture->getPrimaryKey();
 
                     $lecture_date->save();

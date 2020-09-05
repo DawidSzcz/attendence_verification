@@ -5,7 +5,10 @@ use yii\bootstrap\Collapse;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+$this->title = $lecture->name;
+$this->params['breadcrumbs'][] = $this->title;
 ?>
+<h1><?= $this->title; ?></h1>
 <?php $form = ActiveForm::begin([
     'action' => Url::to(['update'])
 ]) ?>

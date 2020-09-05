@@ -1,4 +1,5 @@
 <?php
+
 use app\models\LectureForm;
 use dosamigos\datepicker\DatePicker;
 use dosamigos\datepicker\DateRangePicker;
@@ -7,8 +8,12 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+
+$this->title = 'Lectures';
+$this->params['breadcrumbs'][] = $this->title;
+
 ?>
-<h1>Lectures List</h1>
+<h1><?= $this->title; ?></h1>
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $lectures,
     'columns' => [
@@ -23,7 +28,7 @@ use yii\helpers\Url;
 ]); ?>
 
 
-<h1>Add new Lecture</h1>
+<h2>Add new Lecture</h2>
 <?php $form = ActiveForm::begin([
     'id' => 'lecture-form',
     'action' => Url::to(['addlecture']),

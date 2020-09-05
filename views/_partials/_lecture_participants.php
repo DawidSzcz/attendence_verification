@@ -18,7 +18,7 @@ use yii\helpers\Url;
             'template' => '{delete}',
             'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_id) {
                 if ('delete' === $action) {
-                    return Url::to(['deleteparticipant', 'participant_album_no' => $model['album_no'], 'lecture_id' => $lecture_id]);
+                    return Url::to(['deleteparticipant', 'participant_external_ref' => $model['id'], 'lecture_id' => $lecture_id]);
                 }
                 throw new \yii\base\Exception(sprintf('Undefined action [%s] in lecture view', $action));
             }

@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
 use yii\helpers\Html;
@@ -8,8 +9,10 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use yii\web\Session;
 
 AppAsset::register($this);
+$flashMessages = \Yii::$app->session->getAllFlashes();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -28,7 +31,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
+        'brandLabel' => 'Presence Manager',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -42,6 +45,18 @@ AppAsset::register($this);
     ?>
 
     <div class="container">
+        <?php if ($flashMessages): ?>
+            <?php foreach ($flashMessages as $key => $messages) : ?>
+                <?php if (is_array($messages)): ?>
+                    <?php foreach ($messages as $message) : ?>
+                        <div class="alert alert-warning" role="alert">
+                            <?= $message; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
@@ -51,7 +66,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Presence Manager <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

@@ -16,6 +16,7 @@ class StudentBase extends BaseObject
 
     const CARD_UID = 'card_uid';
     const ALBUM_NO = 'album_no';
+    const ID = 'id';
     const PARAMETRIZED_URL = '%s/%s/%s';
 
     public function __construct($config = [])
@@ -28,6 +29,11 @@ class StudentBase extends BaseObject
     public function retrieveStudentsByCardUids(array $card_uids)
     {
         return $this->retrieveStudentsByParam(static::CARD_UID, $card_uids);
+    }
+
+    public function retrieveStudentsByIds(array $ids)
+    {
+        return $this->retrieveStudentsByParam(static::ID, $ids);
     }
 
     public function retrieveStudentsByAlbumNos(array $album_nos)
