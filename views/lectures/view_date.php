@@ -1,7 +1,7 @@
 <?php
 
 use dosamigos\datetimepicker\DateTimePicker;
-use yii\grid\GridView;
+use yii\bootstrap\Collapse;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -31,63 +31,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?= Html::submitButton('Update', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
 <?php ActiveForm::end() ?>
-
-<h2>Presence List</h2>
-<?= GridView::widget([
-    'dataProvider' => $participants,
-    'columns' => [
-        'album_no',
-        'name',
-        'surname',
+<?= Collapse::widget([
+    'items' => [
         [
-            'class' => 'yii\grid\ActionColumn',
-            'header' => 'Actions',
-            'template' => '{delete} {add}',
-            'buttons' => [
-                'add' => function ($url, $model, $key) use ($presences) {
-                    return !$presences[$model['id']] ? Html::a('add', $url) : '';
-                },
-                'delete' => function ($url, $model, $key) use ($presences) {
-                    return $presences[$model['id']] ? Html::a('delete', $url) : '';
-                }
-            ],
-            'urlCreator' => function ($action, $model, $key, $index, $column) use ($presences, $lecture_date) {
-                return $presences[$model['id']] ?
-                    Url::to(['deletepresence', 'participant_external_ref' => $model['id'], 'lecture_date_id' => $lecture_date->id]) :
-                    Url::to(['addpresence', 'participant_external_ref' => $model['id'], 'lecture_date_id' => $lecture_date->id]);
-            }
+            'label' => 'Presence List',
+            'content' => $this->render('/_partials/_presence_list', [
+                'lecture_date' => $lecture_date,
+                'presences' => $presences,
+                'participants' => $participants
+            ]),
+            'options' => [
+                'class' => 'lecture-collapse'
+            ]
         ],
-    ],
-
-    'rowOptions' => function ($model, $key, $index, $grid) use ($presences) {
-        return [
-            'class' => $presences[$model['id']] ? 'green' : 'red'
-        ];
-    }
-
-]); ?>
-<h2>Unenrolled students</h2>
-<?= \yii\grid\GridView::widget([
-    'dataProvider' => $unenrolled,
-    'options' => [
-        'class' => 'unenrolled'
-    ],
-    'columns' => [
-        'album_no',
-        'name',
-        'surname',
         [
-            'class' => 'yii\grid\ActionColumn',
-            'header' => 'Actions',
-            'template' => '{delete}',
-            'buttons' => [
-                'delete' => function ($url, $model, $key) {
-                    return Html::a('delete', $url);
-                }
-            ],
-            'urlCreator' => function ($action, $model, $key, $index, $column) use ($lecture_date) {
-                return Url::to(['deletepresence', 'participant_external_ref' => $model['id'], 'lecture_date_id' => $lecture_date->id]);
-            }
+            'label' => 'Unenrolled students',
+            'content' => $this->render('/_partials/_presence_unenrolled', [
+                'unenrolled' => $unenrolled,
+                'lecture_date' => $lecture_date
+            ]),
+            'options' => [
+                'class' => 'lecture-collapse'
+            ]
         ],
     ]
 ]); ?>
+
