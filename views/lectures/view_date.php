@@ -8,8 +8,8 @@ use yii\widgets\ActiveForm;
 
 $this->title = $lecture_date->ts;
 $this->params['breadcrumbs'][] = [
-        'label' => $lecture_date->lecture->name,
-        'url' => sprintf('/lectures/view/%d', $lecture_date->lecture_id)
+    'label' => $lecture_date->lecture->name,
+    'url' => sprintf('/lectures/view/%d', $lecture_date->lecture_id)
 ];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -22,14 +22,17 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $form->field($lecture_date, 'ts')->widget(DateTimePicker::class, [
     'language' => 'en',
     'size' => 'ms'
-]); ?>
+])->label('Date'); ?>
 <?= Html::hiddenInput('id', $lecture_date->id); ?>
 <?= Html::label('File structuture: album number seprated with semicolons'); ?>
-<?= Html::fileInput('file') ?>
+<?= Html::fileInput('file', null, [
+    'class' => 'form-control-file'
+]); ?>
 
 <?= Html::submitButton('Update', ['class' => 'btn btn-primary', 'name' => 'lecture-button']); ?>
 <?php ActiveForm::end() ?>
 
+<h2>Presence List</h2>
 <?= GridView::widget([
     'dataProvider' => $participants,
     'columns' => [
@@ -63,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
 ]); ?>
-<h1>Additional Attenders</h1>
+<h2>Unenrolled students</h2>
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $unenrolled,
     'options' => [
